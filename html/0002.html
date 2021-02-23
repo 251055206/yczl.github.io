@@ -1,0 +1,33 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./prettify/prettify.css" type="text/css" />
+    <style>
+        *{margin: 0px;padding: 0px;}
+        html body{background-color:#333; }
+        pre{width: 100%;height: auto; color: azure;}
+    </style>
+    <link rel="stylesheet" href="prettify/prettify.css">
+</head>
+<body>
+<pre  class="prettyprint">
+<div name="div0"></div>
+<input type="text" placeholder="请输入要执行的文件名" value="80" name="input0" oninput="pm2()" style="width: 300px;">
+</pre>
+
+</body>
+<script>
+    function id(id) {return document.getElementById(id);}
+    function name(str) {return document.getElementsByName(str);}
+    var tool={
+        pm2: function (obj,str) {
+            obj.innerHTML='';
+            obj.innerHTML+='netstat -tunlp                       // 用于查看端口号的进程情况<br>';
+            obj.innerHTML+='netstat -tunlp |grep '+str+'         // 查看'+str+'端口的情况<br>';
+        }
+    };
+    function pm2(){tool.pm2(name('div0')[0],name('input0')[0].value);prettyPrint();}
+    window.onload= function () {pm2();prettyPrint();};
+</script>
+
+</html>

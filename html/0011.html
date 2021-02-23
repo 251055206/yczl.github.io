@@ -1,0 +1,194 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./prettify/prettify.css" type="text/css" />
+    <style>
+        *{margin: 0px;padding: 0px;}
+        html body{background-color:#333; }
+        pre{width: 100%;height: auto;}
+    </style>
+    <link rel="stylesheet" href="prettify/prettify.css">
+</head>
+<body>
+<pre  class="prettyprint">
+    <div name="div0"></div>
+<xmp>
+        用到的文件：
+        main.js //启动文件
+        get.js //post请求处理文件，目前只返回html页面
+        post.js //post请求处理文件及post接口
+        socketIO.js //socket文件及socket接口
+        dataApi.js //mongodb连接池文件及数据处理接口，全局开放，需要在模块中引用
+        index.js //首页
+        //main.js文件
+        require('./socketIO')(require('http').createServer(createServer).listen(3000));
+        const GET = require('./get');
+        const POST = require('./post');
+        function createServer(req,res){
+          switch (req.method){
+            case "GET":GET(req,res); break;
+            case "POST":POST(req,res);break;
+          }
+        }
+
+        //get.js文件
+        var fs = require('fs');
+        module.exports= function (req,res) {
+          fs.readFile('./www/index.html',function(error,data){
+            res.writeHead(200,{'Content-Type':'text/html'});
+            res.end(data,'utf-8');
+          });
+        };
+
+        //post.js 文件
+        const dataAPI = require('./dataAPI');
+        const co=require('co');
+        const url = require('url');
+        const querystring=require('querystring');
+
+        var postAPI={
+            new: function (v,callback) {
+                const that=this;
+                return  that[v]= function (req,res) {
+                    var arr = [];
+                    req.on("data",function(data){
+                        arr.push(data);
+                    });
+                    req.on("end",function(){
+                        var arg={
+                            pathname:url.parse(req.url, true).pathname.slice(1),
+                            query:JSON.parse(Buffer.concat(arr).toString())  ,
+                            ret:function(ret) {
+                                res.writeHead(200, { 'Content-Type': 'text/plain;charset=utf-8' });
+                                res.write(ret);
+                                res.end(null);
+                            }
+                        };
+                        return co(callback(arg));
+                    })
+                }
+            }
+        };
+
+        module.exports= function (req,res) {
+            var pathname=url.parse(req.url, true).pathname.slice(1);
+            if(pathname!='req'||'res'||'new'){
+                if(postAPI[pathname] instanceof Function){
+                    postAPI[pathname](req,res);
+                }else{
+                    console.log(pathname,'不是函数或接口错误');
+                }
+            }
+        };
+
+        postAPI.new("aaa", function *(arg) {
+            var  redata= yield dataAPI.api({"textID" : "596da54ef708180c436d4128"});
+            arg.ret(JSON.stringify({query:arg.query,data:redata}));
+        });
+
+        //socketIO.js文件
+        const dataAPI = require('./dataAPI');
+        const co=require('co');
+        module.exports= function (server) {
+          var io = require('socket.io').listen(server);
+          io.sockets.on('connect',function(socket){
+            socket.on("aa", function (data,callback) {
+              console.log(data);
+              co(function *() {
+                var  redata= yield dataAPI.api({"textID" : "596da54ef708180c436d4128"});
+                callback(redata);
+              });
+            });
+          });
+        };
+
+
+        dataAPI.js文件
+        var co=require('co');
+        const MongoClient = require('mongodb').MongoClient;
+        var urla = 'mongodb://@127.0.0.1:27017/abc';
+        var dataAPI={};
+
+        MongoClient.connect(urla,function(err, client) {//连接池，避免连接数上限限制
+          if(err){
+            console.log("MongoClient.connect错误:",err);
+          }
+          dataAPI.client=client;
+        });
+
+        dataAPI.new= function (v,callback) {
+          return  dataAPI[v]= function () {
+            var arg=arguments;
+           return co( callback(dataAPI.client,arg));
+          }
+        };
+
+        dataAPI.new("api", function *(client,arg) {
+            var data0 = client.collection('copyText');
+            var redata=yield data0.find(arg[0]).toArray();
+          console.log('数据接口打印',redata);
+          return redata;
+        });
+
+        module.exports= dataAPI;
+
+        //index.html文件
+
+        <html>
+        <head>
+            <meta charset="utf-8" />
+            <script type="text/javascript">
+                var ajax={
+                    XMLHttp : new XMLHttpRequest(),
+                    postJSON: function (json,callback) {
+                        var that=this.XMLHttp;
+                        that.open('POST',json.api,true);
+                        that.setRequestHeader('Content-type','application/json; charset=utf-8');
+                        that.onreadystatechange = function () {
+                            if (that.readyState==4&&that.status==200) {
+                                callback(that.responseText)
+                            }
+                        };
+                        that.send(JSON.stringify(json.data));
+                    }
+                };
+
+            </script>
+        </head>
+        <body>
+        <input type="button"  onclick="aaa()" value="触发socket接口">
+        <input type="button"  onclick="bbb()" value="触发ajaxPOST接口">
+        <div id="dd"></div>
+
+        </body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+        <script>
+            var socket = io.connect('ws://127.0.0.1:3000/');
+            function aaa(){
+                socket.emit('aa',{a:1}, function (data) {
+                    document.getElementById("dd").innerHTML+='<li>'+JSON.stringify(data)+'</li>'
+                });
+            }
+            function bbb(){
+                ajax.postJSON({api:'aaa',data:{a:1,b:2,c:3}}, function (data) {
+                    console.log(data);
+                });
+            }
+        </script>
+        </html>
+
+
+</xmp>
+</pre>
+
+
+</body>
+<script src="./prettify/prettify.js"></script>
+<script>
+    window.onload= function () {prettyPrint();};
+
+
+
+</script>
+
+</html>

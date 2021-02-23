@@ -1,0 +1,43 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./prettify/prettify.css" type="text/css" />
+    <style>
+        *{margin: 0px;padding: 0px;}
+        html body{background-color:#333; }
+        pre{width: 100%;height: auto;}
+    </style>
+    <link rel="stylesheet" href="prettify/prettify.css">
+</head>
+<body>
+<pre  class="prettyprint">
+    <div name="div0"></div>
+<xmp>
+    1.先无权限启动数据库                   /usr/local/mongodb/bin/mongod   --dbpath=/data/db --fork --logpath=/data/db/mongodb.log
+    2.进入数据库                           use admin
+    3.创建角色                             db.createRole({role:'sysadmin',roles:[],privileges:[{resource:{anyResource:true},actions:['anyAction']}]})
+    4.在admin中创建超级管理员              db.createUser({user:'admin',pwd:'password123',roles:[{role:'sysadmin',db:'admin'}]})
+    5.在主数据库下关闭数据库               db.shutdownServer();
+    6.有权限启动数据库                     /usr/local/mongodb/bin/mongod  --auth --dbpath=/data/db --fork --logpath=/data/db/mongodb.log
+    /usr/local/mongodb/bin/mongod --auth --dbpath=/data/db --fork --logpath=/data/db/mongodb.log --storageEngine wiredTiger --journal --maxConns=50000 --bind_ip 0.0.0.0
+    <hr>
+    创建数据集合                           use newdb
+    创建普通管理员                         db.createUser({user:'userName',pwd:'password123',roles:[{role:'readWrite',db:'admin'}]});
+    登陆数据集合                           db.auth("userName","password123");
+    <hr>
+    把指定的数据库备份到指定目录            ./mongodump -u lzt -p dgxkkg -h 127.0.0.1:27017 -d lwx -o /data/dump
+
+</xmp>
+</pre>
+
+
+</body>
+<script src="./prettify/prettify.js"></script>
+<script>
+    window.onload= function () {prettyPrint();};
+
+
+
+</script>
+
+</html>

@@ -1,0 +1,45 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./prettify/prettify.css" type="text/css" />
+    <style>
+        *{margin: 0px;padding: 0px;}
+        html body{background-color:#333; }
+        pre{width: 100%;height: auto;}
+    </style>
+    <link rel="stylesheet" href="prettify/prettify.css">
+</head>
+<body>
+<pre  class="prettyprint">
+     <div name="div0"></div>
+     <input type="text" placeholder="请输入要执行的文件名" value="app" name="input0" oninput="pm2()" style="width: 300px;">
+</pre>
+</body>
+<script src="./prettify/prettify.js"></script>
+<script>
+
+
+    function id(id) {return document.getElementById(id);}
+    function name(str) {return document.getElementsByName(str);}
+    var tool={
+        pm2: function (obj,str) {
+            obj.innerHTML='';
+            obj.innerHTML+='     查询列表：pm2 ls                           <br>';
+            obj.innerHTML+='     启动文件：pm2 start '+str+'.js             <br>';
+            obj.innerHTML+='     重启项目：pm2 restart '+str+'              <br>';
+            obj.innerHTML+='     监听日志：pm2 logs '+str+'                 <br>';
+            obj.innerHTML+='     停止执行：pm2 stop '+str+'                 <br>';
+            obj.innerHTML+='     删除项目：pm2 delete '+str+'               <br>';
+            obj.innerHTML+='     清除日志：pm2 flush                        <br>';
+            obj.innerHTML+='     启动监听：pm2 start '+str+'.js &&  pm2 logs '+str+'<br>';
+            obj.innerHTML+='     重启监听：pm2 flush && pm2 restart '+str+' &&  pm2 logs '+str+'<br>';
+        }
+    };
+    function pm2(){tool.pm2(name('div0')[0],name('input0')[0].value);prettyPrint();}
+    window.onload= function () {pm2();prettyPrint();};
+
+
+
+</script>
+
+</html>
