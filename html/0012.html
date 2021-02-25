@@ -13,8 +13,7 @@
 <pre  class="prettyprint">
     <div name="div0"></div>
 <xmp>
- 
- 
+
 abstract base class (ABC)                               抽象基类
 abstract class                                          抽象类
 abstract                                                抽象的
@@ -721,56 +720,6 @@ XSL (eXtensible Stylesheet Language)                    可扩展样式表语言
 XSLT (eXtensible Stylesheet Language Transformation)    可扩展样式表语言转换
 xxx based                                               基于xxx的
 xxx oriented                                            面向xxx
-
- 
- 
- 
- 
- 
- 
-
-        <html>
-        <head>
-            <meta charset="utf-8" />
-            <script type="text/javascript">
-                var ajax={
-                    XMLHttp : new XMLHttpRequest(),
-                    postJSON: function (json,callback) {
-                        var that=this.XMLHttp;
-                        that.open('POST',json.api,true);
-                        that.setRequestHeader('Content-type','application/json; charset=utf-8');
-                        that.onreadystatechange = function () {
-                            if (that.readyState==4&&that.status==200) {
-                                callback(that.responseText)
-                            }
-                        };
-                        that.send(JSON.stringify(json.data));
-                    }
-                };
-
-            </script>
-        </head>
-        <body>
-        <input type="button"  onclick="aaa()" value="触发socket接口">
-        <input type="button"  onclick="bbb()" value="触发ajaxPOST接口">
-        <div id="dd"></div>
-
-        </body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-        <script>
-            var socket = io.connect('ws://127.0.0.1:3000/');
-            function aaa(){
-                socket.emit('aa',{a:1}, function (data) {
-                    document.getElementById("dd").innerHTML+='<li>'+JSON.stringify(data)+'</li>'
-                });
-            }
-            function bbb(){
-                ajax.postJSON({api:'aaa',data:{a:1,b:2,c:3}}, function (data) {
-                    console.log(data);
-                });
-            }
-        </script>
-        </html>
 
 
 </xmp>
