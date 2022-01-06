@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+</head>
+<body>
+这个页面需要使用最新版本Chrome内核的浏览器，不是的话可能会有错误
+
+<p>
+    当前IP：<span id="spanGetIP"></span>
+</p>
+
+<p>
+    当前时间：<span id="spanTimeID"></span>
+    当前时间戳：<span id="spanTimeStampID"></span>
+    <input type="button" value="刷新" onclick="nowTime()">
+</p>
+
+
+<p>
+    <span>Unix时间戳转时间</span>
+    <input type="text" value="0" id="unixID">
+    <input type="button" value="转换" onclick="toTime()">
+    <input type="text" value="0" id="unixValID">
+</p>
+
+<p>
+    <span>时间转时间戳</span>
+    <input type="text" value="2022-01-01 12:12:12" id="timeTotsID">
+    <input type="button" value="转换" onclick="toTimeStamp()">
+    秒<input type="text" value="0" id="timeTotsValID01">
+    毫秒<input type="text" value="0" id="timeTotsValID02">
+
+</p>
+
+
+
+</body>
+<script>
+    function id(id) {
+        return document.querySelector(id);
+    }
+    function nowTime(){
+        id("#spanTimeID").innerText=time(Date.now());
+        id("#spanTimeStampID").innerText=Date.now();
+    }
+
+
+    function time(t){
+        let tn=new Date(t);
+        let Y=tn.getFullYear();
+        let M=tn.getMonth()+1;
+        let D=tn.getDay();
+        let h=tn.getHours();
+        let m=tn.getMinutes();
+        let s=tn.getSeconds();
+        return `${Y}-${M}-${D} ${h}:${m}:${s}`
+    }
+
+
+    function toTime(){
+        let t=id("#unixID").value;
+        id("#unixValID").value=time(parseInt(t));
+    }
+    function toTimeStamp(){
+        let t=id("#timeTotsID").value;
+        id("#timeTotsValID01").value=new Date(t).getTime()/1000;
+        id("#timeTotsValID02").value=new Date(t).getTime();
+    }
+
+
+
+
+
+
+    function timestamp(){
+        let time=Date.now();
+        id("#unixID").value=time;
+    }
+
+    function getIP(){
+        //这个函数依赖于    http://pv.sohu.com/cityjson?ie=utf-8
+        id("#spanGetIP").innerText=returnCitySN.cip ;
+    }
+
+
+
+
+
+
+    window.onload=function (){
+        getIP();
+        timestamp();
+        nowTime();
+    }
+
+</script>
+
+
+</html>
